@@ -13,6 +13,8 @@ class Review:
         self.setYear(year);
         self.setSummary(summary);
         self.setEmployeeId(employee_id);
+        self.oldyear = year;
+        self.oldsummary = summary;
 
     def __repr__(self):
         return (
@@ -54,23 +56,38 @@ class Review:
                              (self.year, self.summary, self.employee_id));
         self.id = CURSOR.lastrowid;
 
+    def getOldYear(self):
+        return self.oldyear;
+
+    def setOldYear(self, val):
+        self.oldyear = val;
+
     def getYear(self):
         return self._year;
 
     def setYear(self, val):
-        if (type(val) == int and (val > 2000 or val == 2000)): self._year = val;
+        if (type(val) == int and (val > 2000 or val == 2000)):
+            self._year = val;
         else: raise ValueError("year must be a number greater than or equal to 2000!");
+        
 
     year = property(getYear, setYear);
+
+    def getOldSummary(self): return self.oldsummary;
+
+    def setOldSummary(self, val):
+        self.oldsummary = val;
 
     def getSummary(self):
         return self._summary;
 
     def setSummary(self, val):
-        if (type(val) == str and (len(val) > 0)): self._summary = val;
+        if (type(val) == str and (len(val) > 0)):
+            self._summary = val;
         else: raise ValueError("summary must be a non-empty string!");
 
     summary = property(getSummary, setSummary);
+    
 
     def getEmployeeId(self):
         return self._employee_id;
@@ -119,19 +136,26 @@ class Review:
 
     def update(self):
         """Update the table row corresponding to the current Review instance."""
-        raise Exception("NOT DONE YET 11-7-2023 4:31 PM MST");
+        CURSOR.execute("UPDATE reviews SET summary = ?, year = ? WHERE id = ?",
+                       (self.summary, self.year, self.id));
+        CONN.commit();
+        self.oldyear = self.year;
+        self.oldsummary = self.summary;
+        return None;
 
     def delete(self):
         """Delete the table row corresponding to the current Review instance,
         delete the dictionary entry, and reassign id attribute"""
         CURSOR.execute("DELETE FROM reviews WHERE id = ?", (self.id,));
         CONN.commit();
-        revs = Review.all;
         #delete the dictionary entry
-        pass;
+        del Review.all[self.id];
+        self.id = None;
+        #print(Review.get_all());
+        return None;
 
     @classmethod
     def get_all(cls):
         """Return a list containing one Review instance per table row"""
-        return [cls.all[key] for key in cls.all];
+        return [cls.all[key] for key in sorted([key for key in cls.all])];
 
