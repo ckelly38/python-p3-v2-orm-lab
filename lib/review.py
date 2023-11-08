@@ -23,6 +23,8 @@ class Review:
     @classmethod
     def create_table(cls):
         """ Create a new table to persist the attributes of Review instances """
+        #cls.drop_table();
+
         sql = """
             CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY,
@@ -42,6 +44,7 @@ class Review:
         """
         CURSOR.execute(sql)
         CONN.commit()
+        cls.all.clear();
 
     def save(self):
         """ Insert a new row with the year, summary, and employee id values of the current Review object.
@@ -107,28 +110,28 @@ class Review:
     @classmethod
     def find_by_id(cls, id):
         """Return a Review instance having the attribute values from the table row."""
-        #review = CURSOR.execute("SELECT * FROM reviews WHERE id = ?", (id,));
-        #CONN.commit();
-        #return review;
-        print(id);
-        revs = cls.all;
-        for key in revs:
-            rev = revs[key];
-            print(rev);
+        #print(id);
+        revs = cls.get_all();
+        for rev in revs:
+            #print(rev);
             if (rev.id == id): return rev;
         return None;
 
     def update(self):
         """Update the table row corresponding to the current Review instance."""
-        pass
+        raise Exception("NOT DONE YET 11-7-2023 4:31 PM MST");
 
     def delete(self):
         """Delete the table row corresponding to the current Review instance,
         delete the dictionary entry, and reassign id attribute"""
-        pass
+        CURSOR.execute("DELETE FROM reviews WHERE id = ?", (self.id,));
+        CONN.commit();
+        revs = Review.all;
+        #delete the dictionary entry
+        pass;
 
     @classmethod
     def get_all(cls):
         """Return a list containing one Review instance per table row"""
-        return cls.all;
+        return [cls.all[key] for key in cls.all];
 

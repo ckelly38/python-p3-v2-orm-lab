@@ -188,5 +188,4 @@ class Employee:
     def reviews(self):
         """Return list of reviews associated with current employee"""
         from review import Review;#must be here to avoid circular import
-        revs = Review.get_all();
-        return [revs[ky] for ky in revs.keys() if revs[ky].employee_id == self.id];
+        return [rev for rev in Review.get_all() if rev.employee_id == self.id];

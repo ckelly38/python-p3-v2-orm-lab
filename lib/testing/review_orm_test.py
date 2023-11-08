@@ -147,6 +147,10 @@ class TestReview:
     def test_finds_by_id(self):
         '''contains method "find_by_id()" that returns a Review instance corresponding to its db row retrieved by id.'''
 
+        #CURSOR.execute("DROP TABLE IF EXISTS reviews");
+        #CURSOR.execute("DROP TABLE IF EXISTS employees");
+        #CURSOR.execute("DROP TABLE IF EXISTS departments");
+
         Department.create_table()
         department = Department.create("Payroll", "Building A, 5th Floor")
 
